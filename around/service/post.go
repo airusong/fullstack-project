@@ -10,7 +10,7 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-func searchPostsByUser(user string) ([]model.Post, error) {
+func SearchPostsByUser(user string) ([]model.Post, error) {
 	query := elastic.NewTermQuery("user", user)
 	searchResult, err := backend.ESBackend.ReadFromES(query, constants.POST_INDEX)
 
@@ -20,7 +20,7 @@ func searchPostsByUser(user string) ([]model.Post, error) {
 	return getPostFromSearchResult(searchResult), nil
 }
 
-func searchPostsByKeyWords(keywords string) ([]model.Post, error) {
+func SearchPostsByKeyWords(keywords string) ([]model.Post, error) {
 	query := elastic.NewMatchQuery("message", keywords)
 	query.Operator("AND")
 	if keywords == "" {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"around/model"
+	"around/service"
 
 	"encoding/json"
 	"fmt"
@@ -36,10 +37,29 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if user != "" {
-		posts, err = service.searchPostsByUser(user)
+		posts, err = service.SearchPostsByUser(user)
 	} else {
-		posts, err = service.searchPostsByKeyWords(keywords)
+		posts, err = service.SearchPostsByKeyWords(keywords)
 	}
+
+	if err != nil {
+		http.Error(w, "Failed to read post from backend",
+			http.StatusInternalServerError)
+		fmt.Printf("Failed to read post from backend %v.\n", err)
+
+		return
+	}
+	js, err := json.Marshal(posts)
+	if err != nil {
+
+		http.Error(w, "Failed to parse posts into JSON format",
+			http.StatusInternalServerError)
+
+		fmt.Printf("Failed to parse posts into JSON format %v.\n", err)
+
+		return
+	}
+	w.Write(js)
 
 }
 
@@ -47,5 +67,7 @@ func InitRouter() *mux.Router {
 	router := mux.NewRouter()
 	router.Handle("/upload",
 		http.HandlerFunc(uploadHandler)).Methods("POST")
+	router.Handle("/upload",
+		http.HandlerFunc(searchHandler)).Methods("GET")
 	return router
 }
