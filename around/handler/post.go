@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"around/model"
+
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"around/model"
 
 	"github.com/gorilla/mux"
 )
@@ -22,6 +22,24 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Post received: %s\n", p.Message)
+
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Recieved one request for search")
+	w.Header().Set("Content_type", "application/json")
+
+	user := r.URL.Query().Get("user")
+	keywords := r.URL.Query().Get("keywords")
+
+	var posts []model.Post
+	var err error
+
+	if user != "" {
+		posts, err = service.searchPostsByUser(user)
+	} else {
+		posts, err = service.searchPostsByKeyWords(keywords)
+	}
 
 }
 
