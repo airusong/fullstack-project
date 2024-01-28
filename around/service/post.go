@@ -13,21 +13,19 @@ import (
 func SearchPostsByUser(user string) ([]model.Post, error) {
 	query := elastic.NewTermQuery("user", user)
 	searchResult, err := backend.ESBackend.ReadFromES(query, constants.POST_INDEX)
-
 	if err != nil {
 		return nil, err
 	}
 	return getPostFromSearchResult(searchResult), nil
 }
 
-func SearchPostsByKeyWords(keywords string) ([]model.Post, error) {
+func SearchPostsByKeywords(keywords string) ([]model.Post, error) {
 	query := elastic.NewMatchQuery("message", keywords)
 	query.Operator("AND")
 	if keywords == "" {
 		query.ZeroTermsQuery("all")
 	}
 	searchResult, err := backend.ESBackend.ReadFromES(query, constants.POST_INDEX)
-
 	if err != nil {
 		return nil, err
 	}

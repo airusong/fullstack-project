@@ -90,7 +90,7 @@ func (backend *ElasticsearchBackend) ReadFromES(query elastic.Query, index strin
 		Do(context.Background()) // execute
 	if err != nil {
 		// Handle error
-		panic(err)
+		return nil, err
 	}
 	return searchResult, nil
 }

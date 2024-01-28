@@ -39,7 +39,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	if user != "" {
 		posts, err = service.SearchPostsByUser(user)
 	} else {
-		posts, err = service.SearchPostsByKeyWords(keywords)
+		posts, err = service.SearchPostsByKeywords(keywords)
 	}
 
 	if err != nil {
@@ -67,7 +67,7 @@ func InitRouter() *mux.Router {
 	router := mux.NewRouter()
 	router.Handle("/upload",
 		http.HandlerFunc(uploadHandler)).Methods("POST")
-	router.Handle("/upload",
+	router.Handle("/search",
 		http.HandlerFunc(searchHandler)).Methods("GET")
 	return router
 }
