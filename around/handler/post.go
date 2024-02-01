@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/gorilla/mux"
+	jwt "github.com/form3tech-oss/jwt-go"
 	"github.com/pborman/uuid"
 )
 
@@ -31,10 +31,12 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("recieved one post from request")
 
 	//decoder := json.NewDecoder(r.Body)
-
+	user := r.Context().Value("user")
+	claims := user.(*jwt.Token).Claims
+	username := claims.(jwt.MapClaims)["username"]
 	p := model.Post{
 		Id:      uuid.New(),
-		User:    r.FormValue("user"),
+		User:    username.(string),
 		Message: r.FormValue("message"),
 	}
 	file, header, err := r.FormFile("media_file")
@@ -98,13 +100,4 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(js)
 
-}
-
-func InitRouter() *mux.Router {
-	router := mux.NewRouter()
-	router.Handle("/upload",
-		http.HandlerFunc(uploadHandler)).Methods("POST")
-	router.Handle("/search",
-		http.HandlerFunc(searchHandler)).Methods("GET")
-	return router
 }
